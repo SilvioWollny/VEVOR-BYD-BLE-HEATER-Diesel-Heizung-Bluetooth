@@ -107,6 +107,14 @@ aren't exposed by this YAML but are easy to add if you need them.
    - a status text sensor and a raw debug hex sensor (useful if you need to
      adapt this for a different heater variant)
 
+## Home Assistant dashboard example
+
+Want a nicer dashboard than the default entity list? See
+[`home-assistant/dashboard-example.yaml`](home-assistant/dashboard-example.yaml)
+for a ready-made "Sections" view with analog gauges (case temperature,
+voltage), power/level/target-temperature controls, and a compact status
+row — plus notes on which HACS cards it needs and how to install it.
+
 ## Caveats / things we haven't nailed down
 
 - The exact meaning of a "temperature mode" set-point (`set_temp` at byte 9)
