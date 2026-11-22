@@ -1,0 +1,145 @@
+# ---------------------------------------------------------------------
+# Example Home Assistant dashboard card for the Vevor/BYD diesel heater
+# ---------------------------------------------------------------------
+# This is a "Sections" view card (Home Assistant 2024.x+). It will NOT
+# work pasted into the auto-generated "Home"/"Overview" dashboard — that
+# dashboard does not support manual/custom YAML cards. Instead:
+#
+#   1. Create a new, separate dashboard (Settings -> Dashboards -> Add
+#      Dashboard -> "New dashboard from scratch"), or add a new view to
+#      an existing manual dashboard.
+#   2. Edit the view/section -> "+" -> "Add to dashboard" -> tab
+#      "By card" -> scroll to the bottom -> "Manual".
+#   3. Paste the YAML below and adjust the entity IDs to match your own
+#      installation (see "Replace these entity IDs" below).
+#
+# Required custom cards (install via HACS, see README for links):
+#   - gauge-card-pro      (benjamin-dcs/gauge-card-pro)
+#   - picture-studio      (lalexdotcom/picture-studio-card)  [optional,
+#                          only needed for the heater background image]
+#   - mushroom            (piitaya/lovelace-mushroom)        [optional,
+#                          only used for prettier toggle cards elsewhere]
+#
+# Replace these entity IDs with your own (Settings -> Devices & services
+# -> Entities -> search for your device name):
+#   sensor.schuppen_schuppen_heater_case_temp       -> "Heater Case Temp"
+#   sensor.schuppen_schuppen_heater_voltage         -> "Heater Voltage"
+#   switch.schuppen_schuppen_heater_power           -> "Heater Power"
+#   number.schuppen_schuppen_heater_solltemperatur  -> "Heater Set Temp" (number)
+#   select.schuppen_schuppen_heater_power_level     -> "Heater Power Level"
+#   sensor.schuppen_schuppen_heater_status_text     -> "Heater Status Text"
+#
+# The other entities in this example (ambient shed temperature/humidity,
+# a shed door switch) are not part of this project's ESPHome config —
+# remove those cards, or point them at your own sensors/switches.
+# ---------------------------------------------------------------------
+
+type: grid
+cards:
+  - type: heading
+    heading: Heizung
+
+  # --- Gauges: case temperature, voltage ---
+  - square: true
+    type: grid
+    columns: 3
+    cards:
+      - type: custom:gauge-card-pro
+        header: Gehäuse Temp
+        entity: sensor.schuppen_schuppen_heater_case_temp
+        needle: true
+        min: -10
+        max: 200
+        gradient: false
+        segments:
+          - from: -10
+            color: '#4fc3f7'
+          - from: 15
+            color: '#4caf50'
+          - from: 150
+            color: '#ff9800'
+          - from: 200
+            color: '#f44336'
+
+      - type: custom:gauge-card-pro
+        header: Schuppen Temp
+        entity: sensor.schuppen_temp_schuppen_sonoff_1002c1c69b_temperature
+        needle: true
+        min: -10
+        max: 40
+        segments:
+          - from: -10
+            color: '#4fc3f7'
+          - from: 15
+            color: '#4caf50'
+          - from: 28
+            color: '#ff9800'
+
+      - type: custom:gauge-card-pro
+        header: Heizung Volt
+        entity: sensor.schuppen_schuppen_heater_voltage
+        needle: true
+        min: 10
+        max: 15
+        segments:
+          - from: 10
+            color: '#f44336'
+          - from: 11.5
+            color: '#4caf50'
+          - from: 14
+            color: '#ff9800'
+
+  # --- Optional: background image of the heater with overlaid values,
+  #     built with the Picture Studio drag-and-drop editor (HACS).
+  #     Upload your own image first (Settings -> any entity's picture
+  #     field, or Media -> local upload), then reference it here. ---
+  - type: custom:picture-studio
+    image:
+      media_content_id: /local/heater.png
+    items: []
+
+  # --- Controls row: power toggle, target temperature, power level ---
+  - type: grid
+    columns: 3
+    cards:
+      - type: tile
+        entity: switch.schuppen_schuppen_heater_power
+        name: Heizung
+        icon: mdi:power
+        vertical: false
+        features:
+          - type: toggle
+        features_position: bottom
+
+      - type: tile
+        entity: number.schuppen_schuppen_heater_solltemperatur
+        name: Solltemperatur
+        vertical: false
+        features:
+          - type: numeric-input
+            style: buttons
+        features_position: bottom
+
+      - type: tile
+        entity: select.schuppen_schuppen_heater_power_level
+        name: Stufe
+        vertical: false
+        features:
+          - type: select-options
+            style: buttons
+        features_position: bottom
+
+  # --- Status row: status text, BLE connection, runtime info.
+  #     "glance" is a native card and fits several entities compactly
+  #     in a single row, even on a phone screen. ---
+  - type: glance
+    columns: 4
+    entities:
+      - entity: sensor.schuppen_schuppen_heater_status_text
+        name: Status
+      - entity: binary_sensor.schuppen_schuppen_heater_nicht_erreichbar
+        name: Verbindung
+      - entity: sensor.schuppen_schuppen_heater_laufzeit
+        name: Laufzeit
+      - entity: sensor.schuppen_schuppen_heater_gesamtlaufzeit
+        name: Gesamtlaufzeit
