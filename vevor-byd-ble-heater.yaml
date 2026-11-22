@@ -86,7 +86,7 @@ globals:
 #     [9]  = set_temp (°C)
 #     [10] = set_level (1..10)
 #     [11..12] = supply_voltage  (big-endian, /10)
-#     [13..14] = case_temperature (big-endian, signed 16-bit)
+#     [13..14] = case_temperature (big-endian, signed 16-bit, /10)
 #     [32..33] = cab_temperature  (big-endian, signed 16-bit, /10)
 #     [35] = raw error byte; error_code = raw & 0x3F
 #
@@ -260,7 +260,7 @@ sensor:
       float cab_temp = cab_raw / 10.0f;
 
       id(heater_voltage).publish_state(voltage);
-      id(heater_case_temp).publish_state(case_raw);
+      id(heater_case_temp).publish_state(case_raw / 10.0f);
       id(heater_cab_temp).publish_state(cab_temp);
       id(heater_status_byte).publish_state(running_state);
       id(heater_gear).publish_state(set_level);
